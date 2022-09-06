@@ -74,7 +74,8 @@ The aim of this project is to build a serverless, progressive web application (P
 
 ### FEATURE 5: Add an app shortcut to the home screen
 **User stories:** - As a user, I would like to be able to add the app shortcut to my home screen so that I can open the app faster.
-Scenario: No scenario is need for this feature. Feature handled by user’s OS.
+
+#### Scenario: No scenario is need for this feature. Feature handled by user’s OS.
 
 ### FEATURE 6: Data visualization
 **User stories:** - As a user, I would like to be able to see a chart showing the upcoming events in each city so that I know what events are organized in which city.
