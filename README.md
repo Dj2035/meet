@@ -12,10 +12,10 @@ The aim of this project is to build a serverless, progressive web application (P
 ### FEATURE 1: Filter events by city
 **User stories:** - As a user, I should be able to filter events by city so that I can see the list of events that take place in that city.
 
-#### Scenario 1: When user hasn’t searched for a city, show upcoming events from all cities.
+#### Scenario 1: By default, when user hasn’t searched for a city, show upcoming events from all cities.
 -	Given user hasn’t searched for any city
 -	When the user opens the app
--	Then the user should see a list of all upcoming events
+-	Then the user should see a list of all upcoming events from around the world.
 
 
 #### Scenario 2: User should see a list of suggestions when they search for a city.
