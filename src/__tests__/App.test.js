@@ -6,6 +6,11 @@ import CitySearch from '../CitySearch';
 import NumberOfEvents from '../NumberOfEvents';
 import { mockData } from '../mock-data';
 import { extractLocations, getEvents } from '../api';
+import { waitFor } from "@testing-library/react";
+
+/* ---------------------------
+     unit tests 
+--------------------------- */
 
 describe('<App /> component', () => {
   let AppWrapper;
@@ -26,6 +31,9 @@ describe('<App /> component', () => {
   });
 });
 
+/* ---------------------------
+     integration tests 
+--------------------------- */
 describe('<App /> integration', () => {
 
   test('App passes "events" state as a prop to Eventlist', () => {
@@ -66,5 +74,43 @@ describe('<App /> integration', () => {
     const allEvents = await getEvents();
     expect(AppWrapper.state('events')).toEqual(allEvents);
     AppWrapper.unmount();
-  })
+  });
+
+  test("change state when text input changes", () => {
+    const AppWrapper = mount(<App />);
+    const NumberOfEventsWrapper = AppWrapper.find(NumberOfEvents);
+    NumberOfEventsWrapper.setState({
+      numberOfEvents: "32",
+    });
+    const eventObject = { target: { value: "10" } };
+    NumberOfEventsWrapper.find(".events-number").simulate("change", eventObject);
+    expect(NumberOfEventsWrapper.state("numberOfEvents")).toBe("10");
+    AppWrapper.unmount();
+  });
+
+  test("numberOfEvent state of app is updated after user changes number of events", async () => {
+    const AppWrapper = mount(<App />);
+    AppWrapper.setState({ numberOfEvents: "32" });
+    const eventObject = { target: { value: "10" } };
+
+    const NumberOfEventsWrapper = AppWrapper.find(NumberOfEvents);
+    NumberOfEventsWrapper.find(".events-number").simulate("change", eventObject);
+
+    expect(AppWrapper.state("numberOfEvents")).toBe("10");
+    AppWrapper.unmount();
+  });
+
+  test("events.length is updated after user changes number of events", async () => {
+    const AppWrapper = mount(<App />);
+
+    AppWrapper.setState({ numberOfEvents: "32", locations: "all" });
+    const eventObject = { target: { value: 1 } };
+
+    const NumberOfEventsWrapper = AppWrapper.find(NumberOfEvents);
+    NumberOfEventsWrapper.find(".events-number").simulate("change", eventObject);
+    await waitFor(() => {
+      AppWrapper.update();
+      expect(AppWrapper.state("events").length).toBe(1);
+    });
+  });
 });
