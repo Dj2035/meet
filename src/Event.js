@@ -15,9 +15,12 @@ class Event extends Component {
     return (
       <div className="event">
         <h1 className="event-title">{event.summary}</h1>
-        <p className="event-default-info">
-          {event.start.dateTime} {event.start.timeZone} {event.location}
-        </p>
+        <div className="event-default-info">
+          <h3 className="event-location">{event.location}</h3>
+          <p className="event-data">
+            Start: {event.start.dateTime} - Time zone: {event.start.timeZone}
+          </p>
+        </div>
         {this.state.show && (
           <>
             <h2 className="event-about-title">About event:</h2>
