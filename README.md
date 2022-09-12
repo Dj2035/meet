@@ -44,7 +44,8 @@ The aim of this project is to build a serverless, progressive web application (P
 -	Then the event element will be expanded to show the event details
 
 #### Scenario 3: User can collapse an event to hide its details.
--	Given user has clicked on the “Shoe details” button for an event and the event element is expanded to show event details
+-	Given the app is loaded
+- And the event element is expanded to show event details
 -	When user clicks on “Hide details” button for that event
 -	Then the event element will be collapse and hide the event details
 
