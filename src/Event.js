@@ -22,7 +22,7 @@ class Event extends Component {
           </p>
         </div>
         {this.state.show && (
-          <>
+          <div className="event__Details">
             <h2 className="event-about-title">About event:</h2>
             <a
               href={event.htmlLink}
@@ -33,7 +33,7 @@ class Event extends Component {
               See details on Google Calendar
             </a>
             <p className="event-description">{event.description}</p>
-          </>
+          </div>
         )}
 
         {!this.state.show ? (
