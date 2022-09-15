@@ -38,6 +38,10 @@ input[type="number"] {
   height: 38px;
 }
 
+input[type="text"] {
+  margin-bottom: 6px;
+}
+
 .city {
   width: 250px;
 }
@@ -53,7 +57,7 @@ input[type="number"] {
 
 .suggestions {
   width: 250px;
-  position: absolute;
+  /*position: absolute;*/
   z-index: 2;
   align-self: center;
   margin: 0;
@@ -133,7 +137,7 @@ input[type="number"] {
 }
 
 .Alert {
-  position: fixed;
+  /*position: fixed;*/
   top: 20px;
 }
 
