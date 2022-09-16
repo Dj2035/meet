@@ -6,6 +6,7 @@ import EventList from './EventList';
 import CitySearch from './CitySearch';
 import NumberOfEvents from './NumberOfEvents';
 import { extractLocations, getEvents } from './api';
+import { WarningAlert } from './Alert';
 
 
 class App extends Component {
@@ -13,7 +14,8 @@ class App extends Component {
     events: [],
     locations: [],
     numberOfEvents: 32,
-    currentCity: "all"
+    currentCity: "all",
+    warningText: ""
   }
 
   updateEvents = (location, eventCount) => {
@@ -30,7 +32,7 @@ class App extends Component {
     });
   }
 
-  //I this function will update the number of events of app.state fom <NumberOfEvents>
+  //This function will update the number of events of app.state for <NumberOfEvents>
   updateNumberOfEvents(eventNumber) {
     this.setState({ numberOfEvents: eventNumber });
     const { currentCity } = this.state;
@@ -39,11 +41,25 @@ class App extends Component {
 
   componentDidMount() {
     this.mounted = true;
+    const { numberOfEvents } = this.state;
     getEvents().then((events) => {
       if (this.mounted) {
-        this.setState({ events, locations: extractLocations(events) });
+        this.setState({
+          events: events.slice(0, numberOfEvents),
+          locations: extractLocations(events)
+        });
       }
     });
+    if (!navigator.onLine) {
+      this.setState({
+        warningText:
+          "Internet connection not detected, Application is running offline",
+      });
+    } else {
+      this.setState({
+        warningText: "",
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -55,6 +71,7 @@ class App extends Component {
       <div className="App">
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} numberOfEvents={this.state.numberOfEvents} />
         <NumberOfEvents updateNumberOfEvents={(e) => this.updateNumberOfEvents(e)} />
+        <WarningAlert text={this.state.warningText} />
         <EventList events={this.state.events} />
       </div>
     );
