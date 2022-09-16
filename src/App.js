@@ -5,8 +5,9 @@ import './nprogress.css';
 import EventList from './EventList';
 import CitySearch from './CitySearch';
 import NumberOfEvents from './NumberOfEvents';
-import { extractLocations, getEvents } from './api';
+import { extractLocations, getEvents, getAccessToken, checkToken } from './api';
 import { WarningAlert } from './Alert';
+import WelcomeScreen from './WelcomeScreen';
 
 
 class App extends Component {
@@ -15,7 +16,8 @@ class App extends Component {
     locations: [],
     numberOfEvents: 32,
     currentCity: "all",
-    warningText: ""
+    warningText: "",
+    showWelcomeScreen: undefined
   }
 
   updateEvents = (location, eventCount) => {
@@ -39,26 +41,35 @@ class App extends Component {
     this.updateEvents(currentCity, eventNumber);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.mounted = true;
     const { numberOfEvents } = this.state;
-    getEvents().then((events) => {
-      if (this.mounted) {
+
+    const accessToken = localStorage.getItem("access_token");
+    const isTokenValid = (await checkToken(accessToken)).error ? false : true;
+    const searchParams = new URLSearchParams(window.location.search);
+    const code = searchParams.get("code");
+
+    this.setState({ showWelcomeScreen: !(code || isTokenValid) });
+    if ((code || isTokenValid) && this.mounted) {
+      getEvents().then((events) => {
+        if (this.mounted) {
+          this.setState({
+            events: events.slice(0, numberOfEvents),
+            locations: extractLocations(events),
+          });
+        }
+      });
+      if (!navigator.onLine) {
         this.setState({
-          events: events.slice(0, numberOfEvents),
-          locations: extractLocations(events)
+          warningText:
+            "Internet connection not detected, events loaded from previous session.",
+        });
+      } else {
+        this.setState({
+          warningText: "",
         });
       }
-    });
-    if (!navigator.onLine) {
-      this.setState({
-        warningText:
-          "Internet connection not detected, events loaded from previous session.",
-      });
-    } else {
-      this.setState({
-        warningText: "",
-      });
     }
   }
 
@@ -67,12 +78,18 @@ class App extends Component {
   }
 
   render() {
+    if (this.state.showWelcomeScreen === undefined) return <div className="App" />
+
     return (
       <div className="App">
+        <h1>MEET APP</h1>
+
+        <h4>Choose your nearest city</h4>
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} numberOfEvents={this.state.numberOfEvents} />
         <NumberOfEvents updateNumberOfEvents={(e) => this.updateNumberOfEvents(e)} />
         <WarningAlert text={this.state.warningText} />
         <EventList events={this.state.events} />
+        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => { getAccessToken() }} />
       </div>
     );
   }
