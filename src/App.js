@@ -53,7 +53,7 @@ class App extends Component {
     if (!navigator.onLine) {
       this.setState({
         warningText:
-          "Internet connection not detected, Application is running offline",
+          "Internet connection not detected, events loaded from previous session.",
       });
     } else {
       this.setState({
