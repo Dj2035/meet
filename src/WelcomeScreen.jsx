@@ -30,7 +30,7 @@ o.svg"
           </div>
         </div>
         <a
-          href="https://Dj2035.github.io/meet-app/privacy.html"
+          href="https://dj2035.github.io/meet/privacy.html"
           rel="nofollow noopener"
         >
           Privacy policy
