@@ -5,10 +5,12 @@ import './nprogress.css';
 import EventList from './EventList';
 import CitySearch from './CitySearch';
 import NumberOfEvents from './NumberOfEvents';
-import { extractLocations, getEvents, getAccessToken, checkToken } from './api';
+import { extractLocations, getEvents } from './api';
 import { WarningAlert } from './Alert';
-import WelcomeScreen from './WelcomeScreen';
-
+//import WelcomeScreen from './WelcomeScreen';
+import {
+  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
 
 class App extends Component {
   state = {
@@ -16,8 +18,30 @@ class App extends Component {
     locations: [],
     numberOfEvents: 32,
     currentCity: "all",
-    warningText: "",
-    showWelcomeScreen: undefined
+    offlineInfo: "",
+    //showWelcomeScreen: undefined
+  }
+
+  async componentDidMount() {
+    this.mounted = true;
+    const isOffline = navigator.onLine ? false : true;
+    this.setState({
+      offlineInfo: isOffline
+        ? "No internet connection. Data is loaded from cache."
+        : null
+    });
+    getEvents().then((events) => {
+      if (this.mounted) {
+        this.setState({
+          events: events.slice(0, this.state.numberOfEvents),
+          locations: extractLocations(events)
+        });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   updateEvents = (location, eventCount) => {
@@ -41,55 +65,57 @@ class App extends Component {
     this.updateEvents(currentCity, eventNumber);
   }
 
-  async componentDidMount() {
-    this.mounted = true;
-    const { numberOfEvents } = this.state;
-
-    const accessToken = localStorage.getItem("access_token");
-    const isTokenValid = (await checkToken(accessToken)).error ? false : true;
-    const searchParams = new URLSearchParams(window.location.search);
-    const code = searchParams.get("code");
-
-    this.setState({ showWelcomeScreen: !(code || isTokenValid) });
-    if ((code || isTokenValid) && this.mounted) {
-      getEvents().then((events) => {
-        if (this.mounted) {
-          this.setState({
-            events: events.slice(0, numberOfEvents),
-            locations: extractLocations(events),
-          });
-        }
-      });
-      if (!navigator.onLine) {
-        this.setState({
-          warningText:
-            "Internet connection not detected, events loaded from previous session.",
-        });
-      } else {
-        this.setState({
-          warningText: "",
-        });
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
+  getData = () => {
+    const { locations, events } = this.state;
+    const data = locations.map((location) => {
+      const number = events.filter((event) => event.location === location).length
+      const city = location.split(', ').shift()
+      return { city, number };
+    })
+    return data;
+  };
 
   render() {
-    if (this.state.showWelcomeScreen === undefined) return <div className="App" />
 
     return (
       <div className="App">
         <h1>Meet App</h1>
 
         <h4>Choose your nearest city</h4>
-        <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} numberOfEvents={this.state.numberOfEvents} />
+        <CitySearch
+          locations={this.state.locations}
+          updateEvents={this.updateEvents}
+          numberOfEvents={this.state.numberOfEvents}
+        />
         <NumberOfEvents updateNumberOfEvents={(e) => this.updateNumberOfEvents(e)} />
-        <WarningAlert text={this.state.warningText} />
+        <div className="warningAlert">
+          <WarningAlert text={this.state.offlineInfo} />
+        </div>
+        <h4>Events in each city</h4>
+
+        <ResponsiveContainer height={400} >
+          <ScatterChart
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20,
+            }}
+          >
+            <CartesianGrid />
+            <XAxis type="category" dataKey="city" name="city" />
+            <YAxis
+              type="number"
+              dataKey="number"
+              name="number of events"
+              allowDecimals={false}
+            />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+            <Scatter data={this.getData()} fill="#8884d8" />
+          </ScatterChart>
+        </ResponsiveContainer>
+
         <EventList events={this.state.events} />
-        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => { getAccessToken() }} />
       </div>
     );
   }
