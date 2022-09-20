@@ -123,8 +123,7 @@ input[type="text"] {
 
 .numberOfEvents {
   width: 200px;
-  margin-bottom: 50px;
-  margin-top: 30px;
+  margin: 20px auto;
   text-align: center;
 }
 
