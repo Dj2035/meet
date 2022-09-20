@@ -18,19 +18,11 @@ class App extends Component {
     locations: [],
     numberOfEvents: 32,
     currentCity: "all",
-    offlineInfo: "",
-    showWelcomeScreen: undefined
+    showWelcomeScreen: undefined,
   }
 
   async componentDidMount() {
     this.mounted = true;
-    const isOffline = navigator.onLine ? false : true;
-    this.setState({
-      offlineInfo: isOffline
-        ? "No internet connection. Data is loaded from cache."
-        : null
-    });
-
     const accessToken = localStorage.getItem("access_token");
     const isTokenValid = (await checkToken(accessToken)).error ? false : true;
     const searchParams = new URLSearchParams(window.location.search);
@@ -90,13 +82,6 @@ class App extends Component {
 
     return (
       <div className="App">
-        <WelcomeScreen
-          showWelcomeScreen={this.state.showWelcomeScreen}
-          getAccessToken={() => {
-            getAccessToken();
-          }}
-        />
-
         <h1>Meet App</h1>
 
         <h4>Choose your nearest city</h4>
@@ -106,9 +91,12 @@ class App extends Component {
           numberOfEvents={this.state.numberOfEvents}
         />
         <NumberOfEvents updateNumberOfEvents={(e) => this.updateNumberOfEvents(e)} />
-        <div className="warningAlert">
-          <WarningAlert text={this.state.offlineInfo} />
+        <div className="offlineAlert">
+          {!navigator.onLine && (
+            <WarningAlert text={"You are currently offline! Data loaded from cache."} />
+          )}
         </div>
+
         <h4>Events in each city</h4>
 
         <div className="data-vis-wrapper" >
@@ -137,6 +125,12 @@ class App extends Component {
         </div>
 
         <EventList events={this.state.events} />
+        <WelcomeScreen
+          showWelcomeScreen={this.state.showWelcomeScreen}
+          getAccessToken={() => {
+            getAccessToken();
+          }}
+        />
       </div>
     );
   }
