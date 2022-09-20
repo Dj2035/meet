@@ -22,14 +22,14 @@ const EventGenre = ({ events }) => {
     return data;
   }
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#85D2DB'];
+  const COLORS = ['#0088FE', '#00C49F', '#F5ED0A', '#FF8042', '#85D2DB'];
 
   return (
     <ResponsiveContainer height={400}>
       <PieChart width={400} height={400}>
         <Pie
           data={data}
-          cx={200}
+          cx={250}
           cy={200}
           labelLine={false}
           outerRadius={100}
