@@ -72,14 +72,14 @@ const EventGenre = ({ events }) => {
   };
 
   return (
-    <ResponsiveContainer height={400} >
+    <ResponsiveContainer height={300} >
       <PieChart width={400} height={400}>
         <Pie
           data={pieChartData}
           cx={"50%"}
           cy={"50%"}
           labelLine={false}
-          outerRadius={100}
+          outerRadius={90}
           fill="#8884d8"
           dataKey="value"
           label={renderCustomizedLabel}
