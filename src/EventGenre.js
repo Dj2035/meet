@@ -72,22 +72,24 @@ const EventGenre = ({ events }) => {
   };
 
   return (
-    <PieChart width={600} height={600}>
-      <Pie
-        data={pieChartData}
-        cx={"50%"}
-        cy={"50%"}
-        labelLine={false}
-        outerRadius={150}
-        fill="#8884d8"
-        dataKey="value"
-        label={renderCustomizedLabel}
-      >
-        {pieChartData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-        ))}
-      </Pie>
-    </PieChart>
+    <ResponsiveContainer height={400} >
+      <PieChart width={400} height={400}>
+        <Pie
+          data={pieChartData}
+          cx={"50%"}
+          cy={"50%"}
+          labelLine={false}
+          outerRadius={100}
+          fill="#8884d8"
+          dataKey="value"
+          label={renderCustomizedLabel}
+        >
+          {pieChartData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+      </PieChart>
+    </ResponsiveContainer>
   );
 }
 
