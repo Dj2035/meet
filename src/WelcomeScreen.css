@@ -64,7 +64,8 @@
 }
 
 .btn-text {
-  float: right;
+  text-align: center;
+  display: inline-block;
   color: #fff;
   font-size: 14px;
   letter-spacing: 0.2px;
